@@ -14,9 +14,9 @@ export async function handleHttpRequest(request: Request): Promise<Response> {
   if (request.method === 'POST') {
     let response = 'OK'
 
-    const update = request.json()
+    const update = await request.json()
 
-    await receiveWebhook(update, (res: string) => {
+    await receiveWebhook(Promise.resolve(update), (res: string) => {
       response = res
     })
 
