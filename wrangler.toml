@@ -6,7 +6,11 @@ route = ""
 workers_dev = true
 compatibility_date = "2021-11-18"
 
+# [secrets]
+# SECRET_BOT_API_TOKEN
+
 [build]
-command = "npm install && npm run build"
+command = "yarn && yarn build"
+
 [build.upload]
 format = "service-worker"

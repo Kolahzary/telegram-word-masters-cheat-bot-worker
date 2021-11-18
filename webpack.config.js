@@ -9,6 +9,15 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   mode: 'development',
   resolve: {
+    fallback: {
+      "fs": false,
+      'url': false,
+      'buffer': false,
+      'path': require.resolve("path-browserify"),
+      'stream': require.resolve("stream-browserify"),
+      'http': require.resolve("stream-http"),
+      'https': require.resolve("https-browserify")
+    },
     extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
