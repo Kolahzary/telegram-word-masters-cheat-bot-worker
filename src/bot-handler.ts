@@ -20,37 +20,29 @@ export const configureBotLogic = (bot: Bot) => {
 
     const responseText = generate_response(characters, filter);
 
-    if (responseText.length > 4000) {
-      ctx.reply('Response is too large, try less characters');
-      return;
-    }
-
     await ctx.reply(responseText, {
       parse_mode: 'Markdown',
       reply_to_message_id: ctx.message.message_id,
       reply_markup: {
-        inline_keyboard: generate_keyboard('filter_all').inline_keyboard
+        inline_keyboard: generate_keyboard(characters).inline_keyboard
       }
     })
   })
 
   bot.on('callback_query:data', async (ctx) => {
-    const filter = ctx.callbackQuery.data as any
+    const data = ctx.callbackQuery.data.split(':')
+    const filter = data[0] as any
+    const characters = data[1]
+   
+    const responseText = generate_response(characters, filter)
 
-    const message = ctx.update.callback_query.message
-    if (message) {
-      const characters = extract_entity_value(message, 0)
-
-      const responseText = generate_response(characters, filter)
-
-      await ctx.editMessageText(responseText, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: generate_keyboard(filter).inline_keyboard
-          }
-      })
-    }
-
+    await ctx.editMessageText(responseText, {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: generate_keyboard(characters, filter).inline_keyboard
+      }
+    })
+    
     await ctx.answerCallbackQuery()
   })
 
@@ -69,11 +61,11 @@ export const configureBotLogic = (bot: Bot) => {
         title: 'Cheat It!',
         description: `Find all valid combinations of ${characters}`,
         reply_markup: {
-          inline_keyboard: generate_keyboard('filter_all').inline_keyboard
+          inline_keyboard: generate_keyboard(characters).inline_keyboard
         },
         input_message_content: {
           parse_mode: 'Markdown',
-          message_text: generate_response(characters, 'filter_all'),
+          message_text: generate_response(characters),
         }
       },
       {
@@ -83,7 +75,7 @@ export const configureBotLogic = (bot: Bot) => {
         description: `Find all valid combinations of ${characters}`,
         input_message_content: {
           parse_mode: 'Markdown',
-          message_text: generate_response(characters, 'filter_all'),
+          message_text: generate_response(characters),
         }
       }
     ])

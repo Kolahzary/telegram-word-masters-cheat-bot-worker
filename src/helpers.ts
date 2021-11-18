@@ -55,7 +55,7 @@ export function find_words(characters: string, minLength: number, maxLength: num
     return output
 }
 
-export function generate_response(characters: string, filter: keyof typeof filters) {
+export function generate_response(characters: string, filter: keyof typeof filters = 'filter_all') {
     const matchedWords = find_words(characters, filters[filter].min, filters[filter].max)
 
     let result = ''
@@ -72,15 +72,20 @@ export function generate_response(characters: string, filter: keyof typeof filte
         b: 0
     })
 
-    return `Given characters: \`${characters}\`\nFilter: ${filters[filter].title}\nResult: \`\`\`${result}\`\`\`\nTotal: ${matchedWords.length} (${sum.a}a,${sum.i}i,${sum.b}b)`
+    const response = `Given characters: \`${characters}\`\nFilter: ${filters[filter].title}\nResult: \`\`\`${result}\`\`\`\nTotal: ${matchedWords.length} (${sum.a}a, ${sum.i}i, ${sum.b}b)`
+    if (response.length < 4000) {
+        return response
+    } else {
+        return 'Response is too large, try less characters or apply some filters'
+    }
 }
 
-export function generate_keyboard(currentFilter: keyof typeof filters) {
+export function generate_keyboard(characters: string, currentFilter: keyof typeof filters = 'filter_all') {
     let keyboard = new InlineKeyboard();
 
     const addInlineKey = (filter: keyof typeof filters) => {
         const check = filter === currentFilter ? '✅' : '☑️';
-        return keyboard = keyboard.text(`${check} ${filters[filter].title}`, filter)
+        return keyboard = keyboard.text(`${check} ${filters[filter].title}`, `${filter}:${characters}`)
     }
 
     addInlineKey('filter_all')
