@@ -63,7 +63,16 @@ export function generate_response(characters: string, filter: keyof typeof filte
         result += `\n${x.word}(${x.level})(${x.score})`
     })
 
-    return `Given characters: \`${characters}\`\nFilter: ${filters[filter].title}\nResult: \`\`\`${result}\`\`\``;;
+    const sum = matchedWords.reduce((sum, current) => {
+        sum[current.level]+=1;
+        return sum
+    },{
+        a: 0,
+        i: 0,
+        b: 0
+    })
+
+    return `Given characters: \`${characters}\`\nFilter: ${filters[filter].title}\nResult: \`\`\`${result}\`\`\`\nTotal: ${matchedWords.length} (${sum.a}a,${sum.i}i,${sum.b}b)`
 }
 
 export function generate_keyboard(currentFilter: keyof typeof filters) {
